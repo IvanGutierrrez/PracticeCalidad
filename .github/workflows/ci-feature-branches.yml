@@ -16,4 +16,4 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
       - name: Run unit and integration tests
-        run: mvn clean verify
+        run: mvn clean verify -e -Dspring.profiles.active=test
