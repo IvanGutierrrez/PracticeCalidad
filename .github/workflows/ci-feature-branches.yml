@@ -10,10 +10,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
+
+      - name: Install Chrome
+        run: |
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+
+      - name: Install Chromedriver
+        run: |
+          sudo apt install -y chromium-chromedriver
+          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+
+      - name: Set CHROME_DRIVER path
+        run: |
+          echo "CHROMEWEBDRIVER=/usr/bin/chromedriver" >> $GITHUB_ENV
+
       - name: Run unit and integration tests
         run: mvn clean verify -e -Dspring.profiles.active=test
