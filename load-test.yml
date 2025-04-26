@@ -1,0 +1,78 @@
+config:
+  target: "http://localhost:8080" # Cambia esto según el entorno
+  environments:
+    local:
+      phases:
+        - duration: 40
+          arrivalRate: 5 # Local: 5 usuarios por segundo
+      ensure:
+        maxResponseTime: 100 # Tiempo de respuesta máximo para el 95% de las peticiones
+        maxErrors: 0 # No se permiten errores
+    staging:
+      phases:
+        - name: "Warm-up phase"
+          duration: 40
+          arrivalRate: 10
+          rampTo: 50 # Warm-up: de 10 a 50 usuarios por segundo
+        - pause: 30 # Espera de 30 segundos
+        - name: "Load test phase"
+          duration: 300
+          arrivalRate: 50 # Load test: 50 usuarios por segundo
+      ensure:
+        maxResponseTime: 300 # Tiempo de respuesta máximo para el 95% de las peticiones
+        maxErrors: 0 # No se permiten errores
+      http:
+        pool: 8 # Máximo de 8 conexiones simultáneas
+
+scenarios:
+  - name: "Escenario 1: Recuperar películas y ver detalles"
+    weight: 70
+    flow:
+      - get:
+          url: "/api/films/"
+      - get:
+          url: "/api/films/1"
+    data:
+      csv: "films.csv"
+
+  - name: "Escenario 2: Crear y comprobar película"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/films/"
+          json:
+            title: "Test Movie"
+            synopsis: "Test Synopsis"
+            releaseYear: 2025
+            ageRating: "+18"
+          capture:
+          - json: "$.id"
+            as: "filmId"
+      - get:
+          url: "/api/films/{{ filmId }}"
+    data:
+      csv: "films.csv"
+
+  - name: "Escenario 3: Crear, comprobar y borrar película"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/films/"
+          json:
+            title: "Test Movie"
+            synopsis: "Test Synopsis"
+            releaseYear: 2025
+            ageRating: "+18"
+          capture:
+          - json: "$.id"
+            as: "filmId"
+      - get:
+          url: "/api/films/{{ filmId }}"
+      - delete:
+          url: "/api/films/{{ filmId }}" # Borrar la película
+      - get:
+          url: "/api/films/{{ filmId }}"
+          expect:
+            statusCode: 404 # Comprobar que ya no existe
+    data:
+      csv: "films.csv"

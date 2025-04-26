@@ -1,0 +1,32 @@
+name: Nightly CI/CD
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Cada noche a las 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  multibrowser:
+    runs-on: ubuntu-latest
+    steps:
+      # Instalar Selenium y ejecutar test multibrowser
+
+  loadtesting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Smoke Test
+        run: artillery run smoke.yml
+      - name: Run Load Test Local
+        run: artillery run --environment local load-test.yml > load-test-local-output.json 
+      - name: Run Load Test Staging
+        run:  artillery run --environment staging load-test.yml > load-test-staging-output.json
+
+  publish-if-success:
+    needs: [multibrowser, loadtesting]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag nightly image
+        run: docker build -t myuser/nitflex:nightly-$(date +%F) .
+      - name: Push Docker image
+        run: docker push myuser/nitflex:nightly-$(date +%F)

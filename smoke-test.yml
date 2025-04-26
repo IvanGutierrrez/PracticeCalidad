@@ -1,0 +1,11 @@
+config:
+  target: #url de azure
+  phases:
+    - duration: 10
+      arrivalRate: 1
+scenarios:
+  - flow:
+      - get:
+          url: "/api/films/"
+          expect:
+            - statusCode: 200
