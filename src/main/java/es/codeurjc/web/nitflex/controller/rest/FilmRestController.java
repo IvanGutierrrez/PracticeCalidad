@@ -45,7 +45,7 @@ public class FilmRestController {
 		Optional<FilmDTO> op = filmService.findOne(id);
 		if(op.isPresent()) {
 			FilmDTO film = op.get();
-			System.out.println("Hola mundo 3");
+			System.out.println("Hola mundo");
 			return new ResponseEntity<>(film, HttpStatus.OK);
 		}else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
