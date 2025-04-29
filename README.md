@@ -1,2 +1,2 @@
 ﻿# PracticeCalidad
-aaa
+aa
