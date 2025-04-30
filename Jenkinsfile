@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_HOME = 'C:\\Program Files\\apache-maven-3.9.9'  // Ruta de instalación de Maven
-        PATH = "${MAVEN_HOME}\\bin;${env.PATH}"  // Agrega Maven al PATH
+        MAVEN_HOME = "${env.MAVEN_HOME}"  // Use the system environment variable
+        PATH = "${MAVEN_HOME}\\bin;${env.PATH}"  // Add Maven to PATH
     }
 
     stages {
