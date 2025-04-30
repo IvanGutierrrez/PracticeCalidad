@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        MAVEN_HOME = "${env.MAVEN_HOME}"  // Use the system environment variable
-        PATH = "${MAVEN_HOME}\\bin;${env.PATH}"  // Add Maven to PATH
-    }
-
     stages {
         stage('Build') {
             steps {
