@@ -1,3 +1,2 @@
 ﻿# PracticeCalidad
-prueba 
-2
+
